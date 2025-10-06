@@ -1,4 +1,4 @@
-						TITLE	Programa para evaluar una expresi�n
+						TITLE	Programa para evaluar una expresión
 						PAGE	60, 132
 
 Include Macros.inc
@@ -7,7 +7,6 @@ Include Macros.inc
 GetStdHandle	PROTO	:QWORD
 ReadConsoleW	PROTO	:QWORD,	:QWORD,	:QWORD,	:QWORD,	:QWORD
 WriteConsoleW	PROTO	:QWORD,	:QWORD,	:QWORD,	:QWORD,	:QWORD
-ExitProcess		PROTO	nCodigoSalida:QWORD
 
 						.DATA
 E						QWORD	0
@@ -29,7 +28,7 @@ Principal				PROC
 						; Reserva espacio en la pila
 						SUB		RSP, 40
 
-						; Obtener manejador de la entrada y salida est�ndar
+						; Obtener manejador de la entrada y salida estándar
 						MOV		RCX, STD_INPUT
 						CALL	GetStdHandle
 						MOV		ManejadorE, RAX
@@ -43,18 +42,22 @@ Principal				PROC
 						MOV		R8, LENGTHOF MenEnt01
 						LEA		R9, Caracteres
 						MOV		R10, 0
+						PUSH	R10
 						CALL	WriteConsoleW
+						POP		R10
 						; Leer el valor de A
 						MOV		RCX, ManejadorE
 						LEA		RDX, Texto
 						MOV		R8, 13
 						LEA		R9, Caracteres
 						MOV		R10, 0
+						PUSH	R10
 						CALL	ReadConsoleW
+						POP		R10
 						MacroCadenaAEntero	Texto, A
 
 
-						; Evaluar la expresi�n E = ( 4 * A * B ) - ( C * C )
+						; Evaluar la expresión E = ( 4 * A * B ) - ( C * C )
 
 
 						; Mostrar mensaje de salida
@@ -63,12 +66,17 @@ Principal				PROC
 						MOV		R8, LENGTHOF MenSal01
 						LEA		R9, Caracteres
 						MOV		R10, 0
+						PUSH	R10
 						CALL	WriteConsoleW
+						POP		R10
 						; Mostrar el valor de E en pantalla
 						MacroEnteroACadena	E, Texto, Caracteres
 
-						; Salir al S. O.
-						MOV		RCX, 0
-						CALL	ExitProcess
+						; Recuperar el espacio de la pila
+						ADD		RSP, 40
+
+						; Salir al S. O
+						MOV		RAX, 0					; Código de salida 0
+						RET								; Retornar al sistema operativo
 Principal				ENDP
 						END
